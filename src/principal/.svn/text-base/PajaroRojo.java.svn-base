@@ -1,0 +1,30 @@
+package principal;
+
+import java.awt.Image;
+
+import entorno.Entorno;
+import entorno.Herramientas;
+
+public class PajaroRojo {
+	Image imagen;
+	double x,y;
+	double velocidad;
+	
+	public PajaroRojo(double x, double y, double vel) {
+		this.imagen =  Herramientas.cargarImagen("img/rojo.gif");
+		this.x = x;
+		this.y = y;
+		this.velocidad = vel;
+	}
+	
+	void mover()
+	{
+		this.x += velocidad;
+	}
+	
+	void dibujarse(Entorno ent)
+	{
+		ent.dibujarImagen(imagen, x, y, 0);		
+	}
+	
+}

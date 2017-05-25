@@ -1,0 +1,63 @@
+package principal;
+
+import java.awt.Image;
+
+import entorno.Entorno;
+import entorno.Herramientas;
+
+public class Cerdito {
+	Image imagen;
+	double x,y, vel, angulo_rad, angulo_gr;
+	double rot;
+	
+	public Cerdito(double x, double y, double ang) {
+		this.imagen =  Herramientas.cargarImagen("img/cerdito-small.png");
+		this.x = x;
+		this.y = y;
+		this.vel = 2;
+		this.angulo_rad = ang;
+		this.angulo_gr = Herramientas.grados(ang);
+		this.rot = 0;
+		
+		if (this.angulo_gr < 0 || this.angulo_gr >= 360)
+			this.angulo_gr += -(int)(this.angulo_gr/360)*360;
+	}
+	
+	void mover()
+	{
+		double dx = 0, dy = 0;
+		double rad = angulo_rad;
+		
+		if (0 <= angulo_gr && angulo_gr < 90)
+		{
+			dx = Math.cos(rad);
+			dy = Math.sin(rad); 
+		}
+		else if (90 <= angulo_gr && angulo_gr < 180)
+		{
+			dx = -Math.cos(Math.PI - rad);
+			dy = Math.sin(Math.PI - rad); 
+		} 
+		else if (180 <= angulo_gr && angulo_gr < 270)
+		{
+			dx = -Math.cos(rad - Math.PI);
+			dy = -Math.sin(rad - Math.PI); 
+		} 
+		else if (270 <= angulo_gr && angulo_gr < 360)
+		{
+			dx = Math.cos(2*Math.PI - rad);
+			dy = -Math.sin(2*Math.PI - rad); 
+		} 
+				
+		this.x += dx*vel;
+		this.y += dy*vel;
+		this.rot += 0.08;
+	}
+	
+	void dibujarse(Entorno ent)
+	{
+		ent.dibujarImagen(imagen, x, y, this.rot, 0.8);
+	}
+
+
+}

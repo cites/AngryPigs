@@ -1,0 +1,41 @@
+package principal;
+
+import java.awt.Image;
+
+import entorno.Entorno;
+import entorno.Herramientas;
+
+public class Canion {
+	Image imagen;
+	double x,y, ang, limite_up, limite_down;
+	
+	public Canion(double x, double y, double angulo, double limite_down, double limite_up) 
+	{
+		this.x = x;
+		this.y = y;
+		this.ang = angulo;
+		this.limite_up = limite_up;
+		this.limite_down = limite_down;
+		this.imagen =  Herramientas.cargarImagen("img/canon-small.png");
+	}
+	
+	void mover(double rad)
+	{
+		ang = Math.max(limite_down, Math.min(limite_up, ang + rad));
+	}
+
+	void dibujarse(Entorno ent)
+	{
+		ent.dibujarImagen(imagen, x, y, ang);
+	}
+	
+	Cerdito disparar()
+	{
+		Cerdito c = new Cerdito(x, y, ang);
+		while ((x - c.x)*(x - c.x) + (y - c.y)*(y - c.y) < 1000)
+			c.mover();
+		
+		return c; 
+	}
+
+}

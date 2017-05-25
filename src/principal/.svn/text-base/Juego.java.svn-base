@@ -1,0 +1,110 @@
+package principal;
+
+import java.awt.Image;
+
+import entorno.Entorno;
+import entorno.Herramientas;
+import entorno.InterfaceJuego;
+
+public class Juego extends InterfaceJuego
+{
+	private Entorno entorno;
+	private Image imgFondo, imgPig1, imgPig2, rueda;
+	
+	Canion canion1, canion2;
+	PajaroRojo rojo1, rojo2;
+	Cerdito cerdito1, cerdito2;
+	
+	Juego()
+	{	
+		// Inicializo datos e imágenes de fondo
+		int ancho = 640;
+		int alto = 460;
+		imgFondo = Herramientas.cargarImagen("img/fondo.png");
+		imgPig2 = Herramientas.cargarImagen("img/angry-pig-small.png");
+		imgPig1 = Herramientas.cargarImagen("img/angry-pig-small2.png");
+		rueda = Herramientas.cargarImagen("img/rueda-small.png");
+		
+		// Inicializo los cañones
+		canion1 = new Canion(80, alto - 108, 2*Math.PI, 3*Math.PI/2, 2*Math.PI);
+		canion2 = new Canion(ancho - 80, alto - 108, Math.PI, Math.PI, 3*Math.PI/2);
+		
+		rojo1 = new PajaroRojo(0, 50, 1.5);
+		rojo2 = new PajaroRojo(-50, 100, 2);
+		
+		/* 
+		 * Es fundamental que al final del constructor de la clase Juego se 
+		 * construya un objeto entorno de la siguiente manera.
+		 */
+		entorno = new Entorno(this, "Angry Pigs, ¡la venganza! - Versión 0.1", ancho, alto);
+	}
+
+	/*
+	 * Durante el juego, el método tick() será ejecutado en cada instante y 
+	 * por lo tanto es el método más importante de esta clase. Aquí se debe 
+	 * actualizar el estado interno del juego para simular el paso del tiempo 
+	 * (ver el enunciado del TP para mayor detalle).
+	 */
+	public void tick()
+	{
+		// Dibujo cada cosa que deba ser dibujada
+		entorno.dibujarImagen(imgFondo, 320, 230, 0);
+		entorno.dibujarImagen(imgPig1, 40, entorno.alto() - 117, 0);
+		entorno.dibujarImagen(imgPig2, entorno.ancho() - 40, entorno.alto() - 117, 0);
+
+		if (cerdito1 != null) cerdito1.dibujarse(entorno);
+		if (cerdito2 != null) cerdito2.dibujarse(entorno);
+
+		canion1.dibujarse(entorno);
+		canion2.dibujarse(entorno);
+		
+		entorno.dibujarImagen(rueda, 80, entorno.alto() - 108, 0);
+		entorno.dibujarImagen(rueda, entorno.ancho() - 80, entorno.alto() - 108, 0);
+		
+		rojo1.dibujarse(entorno);
+		rojo2.dibujarse(entorno);
+		
+				
+		// Hago que todo lo que tenga que moverse se mueva 		
+		rojo1.mover();
+		rojo2.mover();
+		
+		if (cerdito1 != null) cerdito1.mover();
+		if (cerdito2 != null) cerdito2.mover();
+		
+		
+		// Verifico si hay acciones del usuario
+		if (entorno.estaPresionada('A'))
+			canion1.mover(-0.05);
+		if (entorno.estaPresionada('S'))
+			canion1.mover(0.05);
+		
+		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA))
+			canion2.mover(-0.05);
+		if (entorno.estaPresionada(entorno.TECLA_DERECHA))
+			canion2.mover(0.05);
+		
+		if (cerdito1 == null && entorno.estaPresionada(entorno.TECLA_CTRL))
+			cerdito1 = canion1.disparar();
+		if (cerdito2 == null && entorno.estaPresionada(entorno.TECLA_ENTER))
+			cerdito2 = canion2.disparar();
+			
+		
+		
+		// Verifico si hay cosas que deberían desaparecer del juego
+		if (cerdito1 != null && !enRango(cerdito1.x, cerdito1.y))
+			cerdito1 = null;
+		if (cerdito2 != null && !enRango(cerdito2.x, cerdito2.y))
+			cerdito2 = null;
+	}
+
+	private boolean enRango(double x, double y) {		
+		return 0 <= x && x <= entorno.ancho() && 0 <= y && y <= entorno.alto();
+	}
+
+	@SuppressWarnings("unused")
+	public static void main(String[] args)
+	{		
+		Juego juego = new Juego();
+	}
+}
